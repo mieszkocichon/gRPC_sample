@@ -1,0 +1,17 @@
+version: "3.3"
+
+services:
+  protoc:
+    image: namely/protoc-all
+    volumes:
+        - .:/defs
+    entrypoint: "sh -c"
+    command: '"protoc --proto_path=proto proto/processor_message.proto --go_out=plugins=grpc:pb"'
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: bash -c "go get -u google.golang.org/grpc && go get -u github.com/golang/protobuf/protoc-gen-go && go run ./main.go"
